@@ -1,0 +1,31 @@
+/* Vos styles existants */
+
+/* Styles pour SweetAlert2 */
+::ng-deep .swal2-popup {
+    border-radius: 15px;
+    padding: 2rem;
+  }
+  
+  ::ng-deep .swal2-title {
+    color: #333;
+    font-size: 1.5rem;
+  }
+  
+  ::ng-deep .swal2-html-container {
+    color: #666;
+  }
+  
+  ::ng-deep .swal2-confirm.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+  
+  ::ng-deep .swal2-cancel.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
+  
+  ::ng-deep .swal2-confirm:focus,
+  ::ng-deep .swal2-cancel:focus {
+    box-shadow: none;
+  }
