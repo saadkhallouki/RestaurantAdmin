@@ -15,16 +15,16 @@ import { RefreshService } from '../../services/refresh-service.service';
 })
 export class RestaurantListComponent implements OnInit, OnDestroy {
   restaurants: Restaurant[] = [];
-  defaultImage = 'assets/images/default-restaurant.jpg';
   private refreshSubscription: Subscription;
 
   constructor(
     private restaurantService: RestaurantService,
     private refreshService: RefreshService
   ) {
-    // S'abonner aux événements de rafraîchissement
     this.refreshSubscription = this.refreshService.refresh$.subscribe(() => {
-      this.loadRestaurants();
+      setTimeout(() => {
+        this.loadRestaurants();
+      }, 500); // Délai de 500ms
     });
   }
 
@@ -42,7 +42,11 @@ export class RestaurantListComponent implements OnInit, OnDestroy {
     this.restaurantService.getAllRestaurants().subscribe({
       next: (data) => {
         console.log('Données reçues du backend:', data);
-        this.restaurants = data;
+        // Mise à jour des URLs d'images pour les restaurants
+        this.restaurants = data.map(restaurant => ({
+          ...restaurant,
+          imgUrl: restaurant.imgUrl // L'URL complète retournée par le backend
+        }));
       },
       error: (error) => {
         console.error('Erreur de chargement:', error);
@@ -54,7 +58,7 @@ export class RestaurantListComponent implements OnInit, OnDestroy {
       }
     });
   }
-
+  
 
   deleteRestaurant(restaurant: Restaurant) {
     Swal.fire({
@@ -94,13 +98,5 @@ export class RestaurantListComponent implements OnInit, OnDestroy {
         });
       }
     });
-  }
-
-  getImageUrl(imageName: string): string {
-    return `assets/images/${imageName}`;
-  }
-
-  handleImageError(event: any) {
-    event.target.src = this.defaultImage;
   }
 }
