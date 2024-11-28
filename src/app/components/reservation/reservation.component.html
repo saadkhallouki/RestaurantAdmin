@@ -1,0 +1,51 @@
+<div class="container mt-4">
+    <h2>Gestion des Réservations</h2>
+    
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Date</th>
+            <th>Heure</th>
+            <th>Nombre de personnes</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (reservation of reservations; track reservation.reservationID) {
+            <tr>
+              <td>{{reservation.reservationID}}</td>
+              <td>{{reservation.name}}</td>
+              <td>{{reservation.email}}</td>
+              <td>{{reservation.date | date:'dd/MM/yyyy'}}</td>
+              <td>{{reservation.time}}</td>
+              <td>{{reservation.numberOfPeople}}</td>
+              <td>
+                <span [class]="getStatusClass(reservation.status)">
+                  {{reservation.status === 'PENDING' ? 'En attente' : 'Confirmé'}}
+                </span>
+              </td>
+              <td>
+                @if (reservation.status === 'PENDING') {
+                  <div>
+                    <button class="btn btn-success btn-sm me-2" 
+                            (click)="validateReservation(reservation.reservationID)">
+                      Confirmer
+                    </button>
+                    <button class="btn btn-danger btn-sm" 
+                            (click)="deleteReservation(reservation.reservationID)">
+                      Refuser
+                    </button>
+                  </div>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>

@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { RestaurantFormComponent } from './components/restaurant-form/restaurant-form.component';
-import { RestaurantListComponent } from './components/restaurant-list/restaurant-list.component';
+import { RouterOutlet, RouterModule } from '@angular/router';
+import { MenuComponent } from './components/menu/menu.component';
 
 @Component({
   selector: 'app-root',
@@ -11,18 +10,18 @@ import { RestaurantListComponent } from './components/restaurant-list/restaurant
   imports: [
     CommonModule,
     HttpClientModule,
-    RestaurantFormComponent,
-    RestaurantListComponent
+    RouterOutlet,
+    RouterModule,
+    MenuComponent
   ],
   template: `
-    <div class="container">
-      <app-restaurant-form></app-restaurant-form>
-      <app-restaurant-list></app-restaurant-list>
-    </div>
+    <app-menu></app-menu>
+    <router-outlet></router-outlet>
   `,
   styles: [`
-    .container {
-      padding: 20px;
+    :host {
+      display: block;
+      min-height: 100vh;
     }
   `]
 })

@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import { Subscription } from 'rxjs';
 import { RefreshService } from '../../services/refresh-service.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-restaurant-list',
@@ -16,15 +17,22 @@ import { RefreshService } from '../../services/refresh-service.service';
 export class RestaurantListComponent implements OnInit, OnDestroy {
   restaurants: Restaurant[] = [];
   private refreshSubscription: Subscription;
+  editForm: FormGroup;
 
   constructor(
     private restaurantService: RestaurantService,
-    private refreshService: RefreshService
+    private refreshService: RefreshService,
+    private fb: FormBuilder
   ) {
     this.refreshSubscription = this.refreshService.refresh$.subscribe(() => {
       setTimeout(() => {
         this.loadRestaurants();
       }, 500); // Délai de 500ms
+    });
+    this.editForm = this.fb.group({
+      name: ['', Validators.required],
+      localisation: ['', Validators.required],
+      file: [null]
     });
   }
 
@@ -95,6 +103,53 @@ export class RestaurantListComponent implements OnInit, OnDestroy {
               icon: 'error'
             });
           }
+        });
+      }
+    });
+  }
+
+  editRestaurant(restaurant: Restaurant) {
+    Swal.fire({
+      title: 'Modifier le restaurant',
+      html: `
+        <form id="editForm">
+          <input id="name" class="swal2-input" placeholder="Nom" value="${restaurant.name}">
+          <input id="localisation" class="swal2-input" placeholder="Localisation" value="${restaurant.location}">
+          <input id="file" type="file" class="swal2-file" accept="image/*">
+        </form>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Modifier',
+      cancelButtonText: 'Annuler',
+      preConfirm: () => {
+        const formData = new FormData();
+        const name = (document.getElementById('name') as HTMLInputElement).value;
+        const localisation = (document.getElementById('localisation') as HTMLInputElement).value;
+        const fileInput = document.getElementById('file') as HTMLInputElement;
+        
+        formData.append('Name', name);
+        formData.append('Localisation', localisation);
+        if (fileInput.files && fileInput.files[0]) {
+          formData.append('file', fileInput.files[0]);
+        }
+        
+        return this.restaurantService.updateRestaurant(restaurant.restaurantID, formData).toPromise()
+          .then(response => {
+            this.loadRestaurants();
+            return response;
+          })
+          .catch(error => {
+            Swal.showValidationMessage(`Erreur: ${error.message}`);
+          });
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Succès!',
+          text: 'Restaurant modifié avec succès',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
         });
       }
     });
