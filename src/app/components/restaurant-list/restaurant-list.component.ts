@@ -110,23 +110,75 @@ export class RestaurantListComponent implements OnInit, OnDestroy {
 
   editRestaurant(restaurant: Restaurant) {
     Swal.fire({
-      title: 'Modifier le restaurant',
+      title: 'Modifier le Restaurant',
       html: `
-        <form id="editForm">
-          <input id="name" class="swal2-input" placeholder="Nom" value="${restaurant.name}">
-          <input id="localisation" class="swal2-input" placeholder="Localisation" value="${restaurant.location}">
-          <input id="file" type="file" class="swal2-file" accept="image/*">
+        <form id="editForm" class="edit-form">
+          <div class="form-group">
+            <label for="name">Nom du Restaurant</label>
+            <input 
+              id="name" 
+              class="swal2-input" 
+              placeholder="Nom" 
+              value="${restaurant.name}"
+              required>
+          </div>
+          <div class="form-group">
+            <label for="localisation">Localisation</label>
+            <input 
+              id="localisation" 
+              class="swal2-input" 
+              placeholder="Localisation" 
+              value="${restaurant.location}"
+              required>
+          </div>
+          <div class="form-group">
+            <label for="file">Image</label>
+            <input 
+              id="file" 
+              type="file" 
+              class="swal2-file" 
+              accept="image/*">
+          </div>
+          <div id="preview-container" class="preview-container">
+            <img id="preview-image" src="${restaurant.imgUrl}" alt="Restaurant preview">
+          </div>
         </form>
       `,
+      didOpen: () => {
+        const fileInput = document.getElementById('file') as HTMLInputElement;
+        fileInput.addEventListener('change', (event) => {
+          const target = event.target as HTMLInputElement;
+          const file = target.files?.[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const previewImage = document.getElementById('preview-image') as HTMLImageElement;
+              previewImage.src = e.target?.result as string;
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      },
       showCancelButton: true,
-      confirmButtonText: 'Modifier',
+      confirmButtonText: 'Enregistrer',
       cancelButtonText: 'Annuler',
+      customClass: {
+        container: 'edit-modal-container',
+        popup: 'edit-modal-popup',
+        confirmButton: 'btn btn-primary',
+        cancelButton: 'btn btn-secondary'
+      },
       preConfirm: () => {
         const formData = new FormData();
         const name = (document.getElementById('name') as HTMLInputElement).value;
         const localisation = (document.getElementById('localisation') as HTMLInputElement).value;
         const fileInput = document.getElementById('file') as HTMLInputElement;
         
+        if (!name || !localisation) {
+          Swal.showValidationMessage('Tous les champs sont requis');
+          return false;
+        }
+  
         formData.append('Name', name);
         formData.append('Localisation', localisation);
         if (fileInput.files && fileInput.files[0]) {

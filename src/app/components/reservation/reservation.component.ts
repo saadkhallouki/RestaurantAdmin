@@ -22,6 +22,7 @@ export class ReservationsComponent implements OnInit {
   loadReservations() {
     this.reservationService.getAllReservations().subscribe({
       next: (data) => {
+        console.log('Reservations data:', data); // Add this debug line
         this.reservations = data;
       },
       error: (error) => {

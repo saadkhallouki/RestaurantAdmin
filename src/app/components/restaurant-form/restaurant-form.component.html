@@ -1,40 +1,85 @@
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Ajouter un Nouveau Restaurant</h2>
-    <form (ngSubmit)="onSubmit()" #restaurantForm="ngForm" class="p-4 border rounded shadow-sm bg-light">
-      <div class="form-group mb-3">
-        <label for="name" class="form-label">Nom</label>
-        <input type="text" 
-               class="form-control" 
-               id="name" 
-               [(ngModel)]="name" 
-               name="name" 
-               required>
+<div class="form-container">
+  <div class="form-card">
+    <h2 class="form-title">Ajouter un Nouveau Restaurant</h2>
+    <form (ngSubmit)="onSubmit()" #restaurantForm="ngForm">
+      
+      <!-- Champ Nom -->
+      <div class="form-group">
+        <div class="input-group">
+          <i class="fas fa-store input-icon"></i>
+          <input type="text" 
+                 class="form-input" 
+                 id="name" 
+                 [(ngModel)]="name" 
+                 name="name" 
+                 required
+                 placeholder="Nom du restaurant">
+          <label for="name" class="form-label">Nom</label>
+        </div>
+        <div *ngIf="errorMessages.includes('Le nom doit contenir au moins 3 caractères')" class="error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          Le nom doit contenir au moins 3 caractères
+        </div>
       </div>
-  
-      <div class="form-group mb-3">
-        <label for="location" class="form-label">Localisation</label>
-        <input type="text" 
-               class="form-control" 
-               id="location" 
-               [(ngModel)]="location" 
-               name="location" 
-               required>
+
+      <!-- Champ Localisation -->
+      <div class="form-group">
+        <div class="input-group">
+          <i class="fas fa-map-marker-alt input-icon"></i>
+          <input type="text" 
+                 class="form-input" 
+                 id="location" 
+                 [(ngModel)]="location" 
+                 name="location" 
+                 required
+                 placeholder="Localisation">
+          <label for="location" class="form-label">Localisation</label>
+        </div>
+        <div *ngIf="errorMessages.includes('La localisation doit contenir au moins 5 caractères')" class="error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          La localisation doit contenir au moins 5 caractères
+        </div>
       </div>
-  
-      <div class="form-group mb-3">
-        <label for="file" class="form-label">Image du Restaurant</label>
-        <input type="file" 
-               class="form-control" 
-               id="file" 
-               (change)="onFileSelected($event)" 
-               accept="image/*" 
-               required>
+
+      <!-- Champ Image -->
+      <div class="form-group">
+        <div class="file-upload">
+          <input type="file" 
+                 class="file-input" 
+                 id="file" 
+                 (change)="onFileSelected($event)" 
+                 accept="image/*" 
+                 required>
+          <label for="file" class="file-label">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>{{selectedFile ? selectedFile.name : 'Choisir une image'}}</span>
+          </label>
+        </div>
+
+        <!-- Image Preview Section -->
+        <div *ngIf="imagePreview" class="image-preview">
+          <p>Aperçu de l'image :</p>
+          <img [src]="imagePreview" alt="Prévisualisation de l'image" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; padding: 5px;">
+        </div>
+
+        <div *ngIf="errorMessages.length > 0" class="error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          <div *ngFor="let message of errorMessages">{{ message }}</div>
+        </div>
       </div>
-  
+
+      <!-- Bouton de soumission -->
       <button type="submit" 
-              class="btn btn-primary w-100" 
-              [disabled]="!restaurantForm.form.valid || !selectedFile">
-        Soumettre
+              class="submit-btn" 
+              [disabled]="!restaurantForm.form.valid || !selectedFile || isLoading"
+              [class.loading]="isLoading">
+        <span *ngIf="!isLoading">
+          <i class="fas fa-plus-circle"></i> Ajouter le restaurant
+        </span>
+        <span *ngIf="isLoading">
+          <i class="fas fa-spinner fa-spin"></i> Traitement...
+        </span>
       </button>
     </form>
   </div>
+</div>

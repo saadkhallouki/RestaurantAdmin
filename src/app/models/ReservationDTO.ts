@@ -1,6 +1,9 @@
 export interface ReservationDTO {
-    email: string;
-    people: number;
-    date: string;
-    restaurantId: number;  // Ajouté pour identifier le restaurant
-  }
+  customerName: string;
+  email: string;
+  phoneNumber: string;
+  dateTime: string;
+  numberOfGuests: number;
+  restaurantId: number;
+  status: string;
+}

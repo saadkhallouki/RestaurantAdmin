@@ -1,0 +1,10 @@
+export interface Reservation {
+    reservationID: number;
+    customerName: string;
+    email: string;
+    phoneNumber: string;
+    dateTime: string;
+    numberOfGuests: number;
+    status: string;
+    restaurantId: number;
+  }
